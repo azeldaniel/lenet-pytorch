@@ -11,8 +11,8 @@ class LeNet1(torch.nn.Module):
         # Mandatory call to super class module.
         super(LeNet1, self).__init__()
 
-        # Creating the feature layers.
-        self.features = torch.nn.Sequential(
+        # Defining the feature extraction layers.
+        self.feature_extractor = torch.nn.Sequential(
 
             # Layer 1 - Conv2d(4, 5x5) - Nx1x28x28 -> Nx4x24x24
             torch.nn.Conv2d(in_channels=1, out_channels=4, kernel_size=5),
@@ -30,21 +30,21 @@ class LeNet1(torch.nn.Module):
             torch.nn.Tanh(),
         )
 
-        # Creating the classification layers.
+        # Defining the classification layers.
         self.classifier = torch.nn.Sequential(
 
-            # Layer 5 - FullyConnected(10) - Nx12x4x4 -> Nx1x10
+            # Layer 5 - FullyConnected(10) - Nx1x192 -> Nx1x10
             torch.nn.Linear(in_features=12*4*4, out_features=10),
             torch.nn.Softmax()
         )
 
     def forward(self, x):
 
-        # Forward pass through layers 1-4
-        x = self.features(x)
+        # Forward pass through the feature extractor - Nx1x28x28 -> Nx12x4x4
+        x = self.feature_extractor(x)
+
+        # Flattening the feature map - Nx12x4x4 -> Nx1x192
         x = torch.flatten(x, 1)
 
-        # Forward pass through layer 5
-        x = self.classifier(x)
-        
-        return x
+        # Forward pass through the classifier - Nx1x192 -> Nx1x10
+        return self.classifier(x)
