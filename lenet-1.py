@@ -27,7 +27,6 @@ class LeNet1(torch.nn.Module):
 
             # Layer 4 - AvgPool2d(2x2) - Nx12x8x8 -> Nx12x4x4
             torch.nn.AvgPool2d(kernel_size=2, stride=2),
-            torch.nn.Tanh(),
         )
 
         # Defining the classification layers.
