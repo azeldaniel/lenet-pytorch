@@ -1,37 +1,53 @@
 import torch
-import torch.nn as nn
 
 
-class LeNet1(nn.Module):
+class LeNet1(torch.nn.Module):
+    """
+    The LeNet 1 module.
+    """
 
     def __init__(self):
+
+        # Mandatory call to super class module.
         super(LeNet1, self).__init__()
 
-        # input is Nx1x28x28
-        model_list = [
-            # params: 4*(5*5*1 + 1) = 104
-            # output is (28 - 5) + 1 = 24 => Nx4x24x24
-            nn.Conv2d(1, 4, 5),
-            nn.Tanh(),
-            # output is 24/2 = 12 => Nx4x12x12
-            nn.AvgPool2d(2),
-            # params: (5*5*4 + 1) * 12 = 1212
-            # output: 12 - 5 + 1 = 8 => Nx12x8x8
-            nn.Conv2d(4, 12, 5),
-            nn.Tanh(),
-            # output: 8/2 = 4 => Nx12x4x4
-            nn.AvgPool2d(2)
-        ]
+        # Layer 1 - Conv2d(4, 5x5) - Nx1x28x28 -> Nx4x24x24
+        self.c1 = torch.nn.Conv2d(in_channels=1, out_channels=4, kernel_size=5)
 
-        self.model = nn.Sequential(*model_list)
-        # params: (12*4*4 + 1) * 10 = 1930
-        self.fc = nn.Linear(12*4*4, 10)
-        self.criterion = nn.CrossEntropyLoss()
+        # Layer 2 - AvgPool2d(2x2) - Nx4x24x24 -> Nx4x12x12
+        self.s2 = torch.nn.AvgPool2d(kernel_size=2, stride=2)
 
-        # Total number of parameters = 104 + 1212 + 1930 = 3246
+        # Layer 3 - Conv2d(12, 5x5) - Nx4x12x12 -> Nx12x8x8
+        self.c3 = torch.nn.Conv2d(
+            in_channels=4, out_channels=12, kernel_size=5)
+
+        # Layer 4 - AvgPool2d(2x2) - Nx12x8x8 -> Nx12x4x4
+        self.s4 = torch.nn.AvgPool2d(kernel_size=2, stride=2)
+
+        # Layer 5 - FullyConnected(10) - Nx12x4x4 -> Nx1x10
+        self.f5 = torch.nn.Linear(in_features=4*4*12, out_features=10)
 
     def forward(self, x):
-        out = self.model(x)
-        out = out.view(x.size(0), -1)
-        out = self.fc(out)
-        return out
+
+        # Forward pass through layer 1, and tanh activation
+        x = torch.nn.functional.tanh(self.c1(x))
+
+        # Forward pass through layer 2
+        x = self.s2(x)
+
+        # Forward pass through layer 3, and tanh activation
+        x = torch.nn.functional.tanh(self.c3(x))
+
+        # Forward pass through layer 4
+        x = self.s4(x)
+        x = x.view(-1, self.flat_features(x))
+
+        # Forward pass through layer 5, and tanh activation
+        return torch.nn.functional.tanh(self.f5(x))
+
+    def flat_features(self, x):
+        size = x.size()[1:]
+        num_features = 1
+        for s in size:
+            num_features *= s
+        return num_features
