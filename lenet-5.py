@@ -55,4 +55,4 @@ class LeNet5(torch.nn.Module):
         x =  torch.tanh(self.f6(x))
 
         # Forward pass through layer 7, and softmax activation
-        return torch.softmax(self.f7(x))
+        return torch.nn.functional.softmax(self.f7(x))

@@ -46,7 +46,7 @@ class LeNet4(torch.nn.Module):
         x = torch.flatten(x, 1)
 
         # Forward pass through layer 5, and tanh activation
-        x =  torch.tanh(self.f5(x))
+        x = torch.tanh(self.f5(x))
 
         # Forward pass through layer 6, and softmax activation
-        return torch.softmax(self.f6(x))
+        return torch.nn.functional.softmax(self.f6(x))
