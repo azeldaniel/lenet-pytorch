@@ -40,10 +40,10 @@ class LeNet1(torch.nn.Module):
 
         # Forward pass through layer 4
         x = self.s4(x)
-        x = x.view(-1, self.flat_features(x))
+        x = torch.flatten(x, 1)
 
         # Forward pass through layer 5, and softmax activation
-        return torch.softmax(self.f5(x))
+        return torch.nn.functional.softmax(self.f5(x))
 
     def flat_features(self, x):
         size = x.size()[1:]

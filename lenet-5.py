@@ -38,14 +38,14 @@ class LeNet5(torch.nn.Module):
         # Forward pass through layer 1, and tanh activation
         x = torch.tanh(self.c1(x))
 
-        # Forward pass through layer 2
-        x = self.s2(x)
+        # Forward pass through layer 2, and sigmoid activation
+        x = torch.sigmoid(self.s2(x))
 
         # Forward pass through layer 3, and tanh activation
         x = torch.tanh(self.c3(x))
 
-        # Forward pass through layer 4
-        x = self.s4(x)
+        # Forward pass through layer 4,  and sigmoid activation
+        x = torch.sigmoid(self.s4(x))
         x = torch.flatten(x, 1)
 
         # Forward pass through layer 5, and tanh activation
