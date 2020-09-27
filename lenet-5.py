@@ -27,7 +27,7 @@ class LeNet5(torch.nn.Module):
             torch.nn.Tanh(),
 
             # Layer 4 - AvgPool2d(2x2) - Nx16x10x10 -> Nx16x5x5
-            self.s4=torch.nn.AvgPool2d(kernel_size=2, stride=2),
+            torch.nn.AvgPool2d(kernel_size=2, stride=2),
             torch.nn.Sigmoid(),
         )
 
